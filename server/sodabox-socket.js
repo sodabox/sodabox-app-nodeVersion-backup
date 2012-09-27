@@ -8,7 +8,7 @@ var   redis     = require(__dirname+'/node_modules/redis')
 
     , sessionStorage
     , messageStorages = []
-    , messageStoragesChk = []
+    , checkCount = 1;
 ;
 
 /* */
@@ -129,9 +129,9 @@ var getMessageStorageList = function(){
 
 				});
 
-				for (var mk in messageStoragesChk) {
+				for (var mk in messageStorages) {
 					if(!messageStoragesChk[mk]){
-						
+						messageStoragesChk
 					}
 				}
 				
