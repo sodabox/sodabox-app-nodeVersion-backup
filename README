@@ -1,4 +1,3 @@
-
 ## 개발서버 실행 (Local)
 
 node sodabox --port 3300
@@ -17,4 +16,211 @@ SODABOX.init();
 
 ## EC2 접속
 ssh -i sodaboxkey.pem ec2-user@ec2-23-20-135-233.compute-1.amazonaws.com
+
+
+
+
+var   redis     = require(__dirname+'/node_modules/redis')
+    , io        = require(__dirname+'/node_modules/socket.io')
+    , zookeeper = require(__dirname+'/node_modules/zookeeper')
+    , port      = process.env.PORT || 3000
+
+    , confFilePath = __dirname+'/../conf/conf-server.js'
+
+;
+
+process.argv.forEach(function (item, index){
+    if(item == '--conf'){
+        confFilePath = process.argv[index+1];
+    }
+});
+var conf = require(confFilePath);
+
+
+
+var SODABOX = SODABOX || {};
+
+SODABOX.server = (function (zookeeper, redis) {
+
+  var SOCKET_SERVER_PATH = '/SOCKET';
+	var pMessageStorageList = {};
+	var pConfProp;
+	var zk;
+
+	// [ private methods ]
+	function addServer(key, serverObj){
+		if(!pMessageStorageList.hasOwnProperty[key]){
+			// @ TODO 서버 연결!!
+			pMessageStorageList[key] = serverObj
+		}
+		var _s = pMessageStorageList[key];
+		_s['_lastCheckCount'] = pMessageStorageList['_lastCheckCount'];
+	}
+	function removeServer(key){
+		delete pMessageStorageList[key];
+	}
+	function resetServers(serverObjList){
+		var _lastCheckCount = pMessageStorageList['_lastCheckCount'] + 1;
+		pMessageStorageList['_lastCheckCount'] = _lastCheckCount;
+		for (var key in serverObjList) {
+			addServer(key, serverObjList[key]);
+		}
+		for (var k in pMessageStorageList){
+			var _d = pMessageStorageList[k];
+			var k_lastCheckCount =_d['_lastCheckCount']
+			if(k_lastCheckCount < _lastCheckCount) {
+				removeServer(k);
+			}
+		}
+	}
+
+
+	function zk_connect(){
+		zk = new zookeeper(
+		    {
+		        connect: conf.zookeeper.url,
+		        timeout: 1000,
+		        debug_level: zookeeper.ZOO_LOG_LEVEL_WARNING,
+		        host_order_deterministic: false
+		    }
+		);
+
+		zk.connect(function (err) {
+			if(err) throw err;
+
+			console.log (" [ZK:CONNECT] id=%s", zk.client_id);
+
+			// SOCKET_SERVER_PATH
+			zk.a_exists(SOCKET_SERVER_PATH, null, function ( rc, error, stat ){
+
+				console.log(" [ZK:EXISTS] "+rc+", "+error+", "+stat );
+
+				if(rc != 0){ // 존재하지 않는다면, rootPath 생성
+					zk.a_create (SOCKET_SERVER_PATH, null, ZooKeeper.ZOO_PERSISTENT, function (rc, error, path)  {
+						if (rc != 0) {
+							// ERROR :: 존재하지 않아서 생성했는데 에러 난 경우
+							console.error ("  [ZK:**ERROR**] ("+SOCKET_SERVER_PATH+") %d, error: '%s', path=%s", rc, error, path);
+						} else {
+							zk_createServerNode();
+						}
+					});
+				}else{
+					zk_createServerNode();
+				}
+
+			});
+		});
+	}
+	function zk_createServerNode(){
+
+		zk.a_exists(SOCKET_SERVER_PATH, null,
+			function ( rc, error, stat ){
+
+				// @ TODO 같은 SocketServer 가 존재하면 안된다 체크 필요!!
+
+				var zNodePath = "/"+conf.server.channel+":"+conf.server.host+":"+conf.server.port;
+				zk.a_create (SOCKET_SERVER_PATH+zNodePath, JSON.stringify(pConfProp), zookeeper.ZOO_EPHEMERAL, function (rc, error, path)  {
+					if (rc != 0) {
+						// ERROR :: 존재하지 않아서 생성했는데 에러 난 경우
+						console.error ("  [ZK:**ERROR**] ("+SOCKET_SERVER_PATH+zNodePath+") %d, error: '%s', path=%s", rc, error, path);
+					} else {
+						console.log (" [ZK:CREATEED] %s", path);
+						zk_retrieveServerList();
+					}
+			});
+		});
+	}
+	function zk_retrieveServerList(){
+		zk.aw_get_children(
+				SOCKET_SERVER_PATH,
+				function ( type, state, path ){
+					console.log('  [WATCH] '+type+','+state+','+path);
+					zk_retrieveServerList();
+				},
+				function(rc,error,children){
+
+					console.log(' >>> '+rc+','+error+','+children);
+
+					if(rc==0){
+						children.forEach(function(child){
+
+							console.log(child);
+							var thisServerInfo = child.split(':');
+							if(pConfProp.server.channel != thisServerInfo[0] ){ // CHANNEL NAME
+								zk.a_get( SOCKET_SERVER_PATH+'/'+child, false, function(rc, error, stat, data){
+
+									console.log(' ---- '+rc+','+error+','+stat+','+data);
+
+								
+								});
+							}
+							
+
+						});
+
+						for (var mk in messageStorages) {
+							if(!messageStoragesChk[mk]){
+								messageStoragesChk
+							}
+						}
+
+
+					}
+
+
+
+
+					/*
+					var result=[];
+					if(rc==0){
+						children.forEach(function(child){
+							var info = child.split(':');
+							result.push({
+								channel: info[0],
+								host: info[1],
+								port: info[2]
+							});
+						});
+
+						options.nodeCallback(result);
+
+					}*/
+				}
+			);
+	}
+
+	function logServers(){
+		for (var key in pMessageStorageList) {
+			console.log(key +" : "+ pMessageStorageList[key]);
+		}
+	}
+
+
+
+	// [ public methods ]
+	return {
+		init: function (conf) {
+			pConfProp = conf;
+			pMessageStorageList['_lastCheckCount'] = 0;
+
+		},
+		add: addServer,
+		remove: removeServer,
+		reset: resetServers,
+		list: pMessageStorageList,
+		log: logServers
+	};
+}(zookeeper, redis));
+
+
+SODABOX.socket = (function () {
+
+}());
+
+
+
+SODABOX.server.init(conf);
+
+SODABOX.socket.init(conf);
+
 
