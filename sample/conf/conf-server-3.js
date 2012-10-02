@@ -12,14 +12,14 @@ module.exports = {
     
     messageStorage: {
     	host : '127.0.0.1',
-    	port : '9903',
-        password: 'redispassword'
+    	port : '9903'/*,
+        password: 'redispassword' */
     },
     
     sessionStorage: {
     	host : '127.0.0.1',
-    	port : '8801',
-        password: 'redispassword'
+    	port : '8801'/*,
+        password: 'redispassword' */
     }
 
 };

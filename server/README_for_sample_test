@@ -1,0 +1,21 @@
+
+# codi server
+
+./jkServer.sh start
+
+
+# redis server
+
+redis-server ../sample/conf/redis9901.conf
+redis-server ../sample/conf/redis9902.conf
+redis-server ../sample/conf/redis9903.conf
+
+redis-server ../sample/conf/redis8801.conf
+
+
+# sample application
+
+node sodabox-socket --conf ../sample/conf/conf-server-1.js
+node sodabox-socket --conf ../sample/conf/conf-server-2.js
+node sodabox-socket --conf ../sample/conf/conf-server-3.js
+

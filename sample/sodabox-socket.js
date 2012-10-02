@@ -1,8 +1,11 @@
 
-var   redis     = require(__dirname+'/node_modules/redis')
-    , io        = require(__dirname+'node_modules/socket.io')
-    , zookeeper = require(__dirname+'node_modules/zookeeper')
+var   redis     = require(__dirname+'/../server/node_modules/redis')
+    , io        = require(__dirname+'/../server/node_modules/socket.io')
+    , zookeeper = require(__dirname+'/../server/node_modules/zookeeper')
+    , port      = process.env.PORT || 3000
+
     , confFilePath = __dirname+'/../conf/conf-server.js'
+
 ;
 
 process.argv.forEach(function (item, index){
@@ -11,6 +14,8 @@ process.argv.forEach(function (item, index){
     }
 });
 var conf = require(confFilePath);
+
+
 
 
 console.log(" [STARTED] "+conf.server.host+":"+conf.server.port+"("+conf.server.channel+")\n");
