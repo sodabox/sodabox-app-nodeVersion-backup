@@ -1,8 +1,8 @@
 
 var   redis     = require(__dirname+'/node_modules/redis')
-    , io        = require(__dirname+'node_modules/socket.io')
-    , zookeeper = require(__dirname+'node_modules/zookeeper')
-    , confFilePath = __dirname+'/../conf/conf-server.js'
+    , io        = require(__dirname+'/node_modules/socket.io')
+    , zookeeper = require(__dirname+'/node_modules/zookeeper')
+    , confFilePath = __dirname+'/../conf/socketServer.js'
 ;
 
 process.argv.forEach(function (item, index){
@@ -19,7 +19,7 @@ var SODABOX = SODABOX || {};
 
 SODABOX.server = (function (zookeeper, redis) {
 
-    var SOCKET_SERVER_PATH = '/SOCKET';
+    var ROOT_PATH = '/SODABOX_messageStorage';
     var pMessageStorageList = {};
     var pConfProp;
     var zk;
@@ -67,16 +67,16 @@ SODABOX.server = (function (zookeeper, redis) {
 
             console.log (" [ZK:CONNECT] id=%s", zk.client_id);
 
-            // SOCKET_SERVER_PATH
-            zk.a_exists(SOCKET_SERVER_PATH, null, function ( rc, error, stat ){
+            // ROOT_PATH
+            zk.a_exists(ROOT_PATH, null, function ( rc, error, stat ){
 
                 console.log(" [ZK:EXISTS] "+rc+", "+error+", "+stat );
 
                 if(rc != 0){ // 존재하지 않는다면, rootPath 생성
-                    zk.a_create (SOCKET_SERVER_PATH, null, zookeeper.ZOO_PERSISTENT, function (rc, error, path)  {
+                    zk.a_create (ROOT_PATH, null, zookeeper.ZOO_PERSISTENT, function (rc, error, path)  {
                         if (rc != 0) {
                             // ERROR :: 존재하지 않아서 생성했는데 에러 난 경우
-                            console.error ("  [ZK:**ERROR**] ("+SOCKET_SERVER_PATH+") %d, error: '%s', path=%s", rc, error, path);
+                            console.error ("  [ZK:**ERROR**] ("+ROOT_PATH+") %d, error: '%s', path=%s", rc, error, path);
                         } else {
                             zk_createServerNode();
                         }
@@ -90,7 +90,7 @@ SODABOX.server = (function (zookeeper, redis) {
     }
     function zk_createServerNode(){
 
-        zk.a_exists(SOCKET_SERVER_PATH, null,
+        zk.a_exists(ROOT_PATH, null,
             function ( rc, error, stat ){
 
                 // @ TODO 같은 SocketServer 가 존재하면 안된다 체크 필요!!
@@ -98,10 +98,10 @@ SODABOX.server = (function (zookeeper, redis) {
                 console.log(JSON.stringify(pConfProp));
 
                 var zNodePath = "/"+pConfProp.server.channel+":"+pConfProp.server.host+":"+pConfProp.server.port;
-                zk.a_create (SOCKET_SERVER_PATH+zNodePath, JSON.stringify(pConfProp), zookeeper.ZOO_EPHEMERAL, function (rc, error, path)  {
+                zk.a_create (ROOT_PATH+zNodePath, JSON.stringify(pConfProp), zookeeper.ZOO_EPHEMERAL, function (rc, error, path)  {
                     if (rc != 0) {
                         // ERROR :: 존재하지 않아서 생성했는데 에러 난 경우
-                        console.error ("  [ZK:**ERROR**] ("+SOCKET_SERVER_PATH+zNodePath+") %d, error: '%s', path=%s", rc, error, path);
+                        console.error ("  [ZK:**ERROR**] ("+ROOT_PATH+zNodePath+") %d, error: '%s', path=%s", rc, error, path);
                     } else {
                         console.log (" [ZK:CREATEED] %s", path);
                         zk_retrieveServerList();
@@ -111,7 +111,7 @@ SODABOX.server = (function (zookeeper, redis) {
     }
     function zk_retrieveServerList(){
         zk.aw_get_children(
-                SOCKET_SERVER_PATH,
+                ROOT_PATH,
                 function ( type, state, path ){
                     console.log('  [WATCH] '+type+','+state+','+path);
                     zk_retrieveServerList();
@@ -130,7 +130,7 @@ SODABOX.server = (function (zookeeper, redis) {
                             console.log(child);
                             var thisServerInfo = child.split(':');
                             if(pConfProp.server.channel != thisServerInfo[0] ){ // CHANNEL NAME
-                                zk.a_get( SOCKET_SERVER_PATH+'/'+child, false, function(rc, error, stat, data){
+                                zk.a_get( ROOT_PATH+'/'+child, false, function(rc, error, stat, data){
 
                                     console.log(' ---- '+rc+','+error+','+stat+','+data);
 
@@ -176,14 +176,6 @@ SODABOX.server = (function (zookeeper, redis) {
         );
     }
 
-    function logServers(){
-        for (var key in pMessageStorageList) {
-            console.log(key +" : "+ pMessageStorageList[key]);
-        }
-    }
-
-
-
     // [ public methods ]
     return {
         init: function (conf) {
@@ -192,7 +184,7 @@ SODABOX.server = (function (zookeeper, redis) {
 
             zk_connect();
         },
-        list: pMessageStorageList
+        messageStorageList: pMessageStorageList
     };
 
 }(zookeeper, redis));
@@ -352,7 +344,7 @@ SODABOX.socket = (function (io, redis) {
             }else{
                 
                 // ** MG, SC ** //
-                SODABOX.server[c.CN].publish( c.CN,   JSON.stringify({
+                SODABOX.server.messageStorageList[c.CN].publish( c.CN,   JSON.stringify({
                     MG : msgType,   // (MG - message)
                     SC : socketId,  // (SC - socket )
                     _type : 'S',     // S : system message

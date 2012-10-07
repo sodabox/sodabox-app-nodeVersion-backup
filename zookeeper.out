@@ -1,0 +1,79 @@
+2012-10-07 00:28:49,014 [myid:] - INFO  [main:QuorumPeerConfig@101] - Reading configuration from: /Users/yohan/github/local/sodabox-app/sample/zookeeper-3.4.4/bin/../conf/zoo.cfg
+2012-10-07 00:28:49,035 [myid:] - INFO  [main:DatadirCleanupManager@78] - autopurge.snapRetainCount set to 3
+2012-10-07 00:28:49,036 [myid:] - INFO  [main:DatadirCleanupManager@79] - autopurge.purgeInterval set to 0
+2012-10-07 00:28:49,037 [myid:] - INFO  [main:DatadirCleanupManager@101] - Purge task is not scheduled.
+2012-10-07 00:28:49,037 [myid:] - WARN  [main:QuorumPeerMain@113] - Either no config or no quorum defined in config, running  in standalone mode
+2012-10-07 00:28:49,064 [myid:] - INFO  [main:QuorumPeerConfig@101] - Reading configuration from: /Users/yohan/github/local/sodabox-app/sample/zookeeper-3.4.4/bin/../conf/zoo.cfg
+2012-10-07 00:28:49,065 [myid:] - INFO  [main:ZooKeeperServerMain@95] - Starting server
+2012-10-07 00:28:49,084 [myid:] - INFO  [main:Environment@100] - Server environment:zookeeper.version=3.4.4-1386507, built on 09/17/2012 08:33 GMT
+2012-10-07 00:28:49,084 [myid:] - INFO  [main:Environment@100] - Server environment:host.name=localhost
+2012-10-07 00:28:49,085 [myid:] - INFO  [main:Environment@100] - Server environment:java.version=1.6.0_35
+2012-10-07 00:28:49,086 [myid:] - INFO  [main:Environment@100] - Server environment:java.vendor=Apple Inc.
+2012-10-07 00:28:49,086 [myid:] - INFO  [main:Environment@100] - Server environment:java.home=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
+2012-10-07 00:28:49,087 [myid:] - INFO  [main:Environment@100] - Server environment:java.class.path=/Users/yohan/github/local/sodabox-app/sample/zookeeper-3.4.4/bin/../build/classes:/Users/yohan/github/local/sodabox-app/sample/zookeeper-3.4.4/bin/../build/lib/*.jar:/Users/yohan/github/local/sodabox-app/sample/zookeeper-3.4.4/bin/../lib/slf4j-log4j12-1.6.1.jar:/Users/yohan/github/local/sodabox-app/sample/zookeeper-3.4.4/bin/../lib/slf4j-api-1.6.1.jar:/Users/yohan/github/local/sodabox-app/sample/zookeeper-3.4.4/bin/../lib/netty-3.2.2.Final.jar:/Users/yohan/github/local/sodabox-app/sample/zookeeper-3.4.4/bin/../lib/log4j-1.2.15.jar:/Users/yohan/github/local/sodabox-app/sample/zookeeper-3.4.4/bin/../lib/jline-0.9.94.jar:/Users/yohan/github/local/sodabox-app/sample/zookeeper-3.4.4/bin/../zookeeper-3.4.4.jar:/Users/yohan/github/local/sodabox-app/sample/zookeeper-3.4.4/bin/../src/java/lib/*.jar:/Users/yohan/github/local/sodabox-app/sample/zookeeper-3.4.4/bin/../conf:
+2012-10-07 00:28:49,088 [myid:] - INFO  [main:Environment@100] - Server environment:java.library.path=.:/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java
+2012-10-07 00:28:49,089 [myid:] - INFO  [main:Environment@100] - Server environment:java.io.tmpdir=/var/folders/w7/sbjdgv2j0zg5t3cjrph49gcm0000gn/T/
+2012-10-07 00:28:49,090 [myid:] - INFO  [main:Environment@100] - Server environment:java.compiler=<NA>
+2012-10-07 00:28:49,090 [myid:] - INFO  [main:Environment@100] - Server environment:os.name=Mac OS X
+2012-10-07 00:28:49,091 [myid:] - INFO  [main:Environment@100] - Server environment:os.arch=x86_64
+2012-10-07 00:28:49,092 [myid:] - INFO  [main:Environment@100] - Server environment:os.version=10.8.2
+2012-10-07 00:28:49,092 [myid:] - INFO  [main:Environment@100] - Server environment:user.name=yohan
+2012-10-07 00:28:49,093 [myid:] - INFO  [main:Environment@100] - Server environment:user.home=/Users/yohan
+2012-10-07 00:28:49,095 [myid:] - INFO  [main:Environment@100] - Server environment:user.dir=/Users/yohan/github/local/sodabox-app
+2012-10-07 00:28:49,110 [myid:] - INFO  [main:ZooKeeperServer@726] - tickTime set to 2000
+2012-10-07 00:28:49,111 [myid:] - INFO  [main:ZooKeeperServer@735] - minSessionTimeout set to -1
+2012-10-07 00:28:49,111 [myid:] - INFO  [main:ZooKeeperServer@744] - maxSessionTimeout set to -1
+2012-10-07 00:28:49,165 [myid:] - INFO  [main:NIOServerCnxnFactory@94] - binding to port 0.0.0.0/0.0.0.0:2181
+2012-10-07 00:28:49,201 [myid:] - INFO  [main:FileTxnSnapLog@240] - Snapshotting: 0x0 to /tmp/zookeeper/version-2/snapshot.0
+2012-10-07 00:35:11,281 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:49166
+2012-10-07 00:35:11,403 [myid:] - WARN  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793] - Connection request from old client /127.0.0.1:49166; will be dropped if server is in r-o mode
+2012-10-07 00:35:11,405 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839] - Client attempting to establish new session at /127.0.0.1:49166
+2012-10-07 00:35:11,409 [myid:] - INFO  [SyncThread:0:FileTxnLog@199] - Creating new log file: log.1
+2012-10-07 00:35:11,434 [myid:] - INFO  [SyncThread:0:ZooKeeperServer@595] - Established session 0x13a36b1703c0000 with negotiated timeout 4000 for client /127.0.0.1:49166
+2012-10-07 00:36:13,428 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:49168
+2012-10-07 00:36:13,493 [myid:] - WARN  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793] - Connection request from old client /127.0.0.1:49168; will be dropped if server is in r-o mode
+2012-10-07 00:36:13,494 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839] - Client attempting to establish new session at /127.0.0.1:49168
+2012-10-07 00:36:13,495 [myid:] - INFO  [SyncThread:0:ZooKeeperServer@595] - Established session 0x13a36b1703c0001 with negotiated timeout 4000 for client /127.0.0.1:49168
+2012-10-07 00:37:12,283 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:49171
+2012-10-07 00:37:12,393 [myid:] - WARN  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793] - Connection request from old client /127.0.0.1:49171; will be dropped if server is in r-o mode
+2012-10-07 00:37:12,394 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839] - Client attempting to establish new session at /127.0.0.1:49171
+2012-10-07 00:37:12,397 [myid:] - INFO  [SyncThread:0:ZooKeeperServer@595] - Established session 0x13a36b1703c0002 with negotiated timeout 4000 for client /127.0.0.1:49171
+2012-10-07 08:28:59,441 [myid:] - WARN  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@349] - caught end of stream exception
+EndOfStreamException: Unable to read additional data from client sessionid 0x13a36b1703c0000, likely client has closed socket
+	at org.apache.zookeeper.server.NIOServerCnxn.doIO(NIOServerCnxn.java:220)
+	at org.apache.zookeeper.server.NIOServerCnxnFactory.run(NIOServerCnxnFactory.java:208)
+	at java.lang.Thread.run(Thread.java:680)
+2012-10-07 08:28:59,549 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:49166 which had sessionid 0x13a36b1703c0000
+2012-10-07 08:28:59,715 [myid:] - WARN  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@349] - caught end of stream exception
+EndOfStreamException: Unable to read additional data from client sessionid 0x13a36b1703c0001, likely client has closed socket
+	at org.apache.zookeeper.server.NIOServerCnxn.doIO(NIOServerCnxn.java:220)
+	at org.apache.zookeeper.server.NIOServerCnxnFactory.run(NIOServerCnxnFactory.java:208)
+	at java.lang.Thread.run(Thread.java:680)
+2012-10-07 08:28:59,717 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:49168 which had sessionid 0x13a36b1703c0001
+2012-10-07 08:28:59,744 [myid:] - WARN  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@349] - caught end of stream exception
+EndOfStreamException: Unable to read additional data from client sessionid 0x13a36b1703c0002, likely client has closed socket
+	at org.apache.zookeeper.server.NIOServerCnxn.doIO(NIOServerCnxn.java:220)
+	at org.apache.zookeeper.server.NIOServerCnxnFactory.run(NIOServerCnxnFactory.java:208)
+	at java.lang.Thread.run(Thread.java:680)
+2012-10-07 08:28:59,748 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:49171 which had sessionid 0x13a36b1703c0002
+2012-10-07 08:28:59,779 [myid:] - INFO  [SessionTracker:ZooKeeperServer@325] - Expiring session 0x13a36b1703c0002, timeout of 4000ms exceeded
+2012-10-07 08:28:59,780 [myid:] - INFO  [SessionTracker:ZooKeeperServer@325] - Expiring session 0x13a36b1703c0000, timeout of 4000ms exceeded
+2012-10-07 08:28:59,781 [myid:] - INFO  [SessionTracker:ZooKeeperServer@325] - Expiring session 0x13a36b1703c0001, timeout of 4000ms exceeded
+2012-10-07 08:28:59,795 [myid:] - INFO  [ProcessThread(sid:0 cport:-1)::PrepRequestProcessor@476] - Processed session termination for sessionid: 0x13a36b1703c0002
+2012-10-07 08:28:59,803 [myid:] - INFO  [ProcessThread(sid:0 cport:-1)::PrepRequestProcessor@476] - Processed session termination for sessionid: 0x13a36b1703c0000
+2012-10-07 08:28:59,804 [myid:] - INFO  [ProcessThread(sid:0 cport:-1)::PrepRequestProcessor@476] - Processed session termination for sessionid: 0x13a36b1703c0001
+2012-10-07 08:29:01,183 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:49174
+2012-10-07 08:29:01,185 [myid:] - WARN  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793] - Connection request from old client /127.0.0.1:49174; will be dropped if server is in r-o mode
+2012-10-07 08:29:01,186 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@832] - Client attempting to renew session 0x13a36b1703c0000 at /127.0.0.1:49174
+2012-10-07 08:29:01,187 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@588] - Invalid session 0x13a36b1703c0000 for client /127.0.0.1:49174, probably expired
+2012-10-07 08:29:01,188 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:49174 which had sessionid 0x13a36b1703c0000
+2012-10-07 08:29:01,386 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:49175
+2012-10-07 08:29:01,388 [myid:] - WARN  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793] - Connection request from old client /127.0.0.1:49175; will be dropped if server is in r-o mode
+2012-10-07 08:29:01,389 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@832] - Client attempting to renew session 0x13a36b1703c0001 at /127.0.0.1:49175
+2012-10-07 08:29:01,389 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@588] - Invalid session 0x13a36b1703c0001 for client /127.0.0.1:49175, probably expired
+2012-10-07 08:29:01,390 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:49175 which had sessionid 0x13a36b1703c0001
+2012-10-07 08:29:01,411 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:49176
+2012-10-07 08:29:01,413 [myid:] - WARN  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793] - Connection request from old client /127.0.0.1:49176; will be dropped if server is in r-o mode
+2012-10-07 08:29:01,413 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@832] - Client attempting to renew session 0x13a36b1703c0002 at /127.0.0.1:49176
+2012-10-07 08:29:01,414 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@588] - Invalid session 0x13a36b1703c0002 for client /127.0.0.1:49176, probably expired
+2012-10-07 08:29:01,415 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:49176 which had sessionid 0x13a36b1703c0002
