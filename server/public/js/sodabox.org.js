@@ -1,6 +1,6 @@
 var SODABOX_defaultInfo = {
     
-    _SODABOX_appurl     : 'http://sodabox.allypost.com:3300',
+    _SODABOX_appurl     : 'http://sodabox.allypost.com:3001',
     _SODABOX_socketurl  : 'http://sodaboxsocket.allypost.com:3400',
     /*
     _SODABOX_appurl     : 'http://ec2-23-20-135-233.compute-1.amazonaws.com:8000',
@@ -438,6 +438,8 @@ var SODABOX = (function(DEF_VAR, UTILS, WIN) {
         if(data.isAuth){
             
             _auth.user = data.user;
+
+            console.log(JSON.stringify(data));
             
             WIN.logined(data.user.target);
             

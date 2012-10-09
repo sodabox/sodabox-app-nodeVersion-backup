@@ -65,12 +65,8 @@ SODABOX.server = (function (zookeeper, redis) {
         zk.connect(function (err) {
             if(err) throw err;
 
-            console.log (" [ZK:CONNECT] id=%s", zk.client_id);
-
             // ROOT_PATH
             zk.a_exists(ROOT_PATH, null, function ( rc, error, stat ){
-
-                console.log(" [ZK:EXISTS] "+rc+", "+error+", "+stat );
 
                 if(rc != 0){ // 존재하지 않는다면, rootPath 생성
                     zk.a_create (ROOT_PATH, null, zookeeper.ZOO_PERSISTENT, function (rc, error, path)  {
@@ -95,15 +91,12 @@ SODABOX.server = (function (zookeeper, redis) {
 
                 // @ TODO 같은 SocketServer 가 존재하면 안된다 체크 필요!!
 
-                console.log(JSON.stringify(pConfProp));
-
                 var zNodePath = "/"+pConfProp.server.channel+":"+pConfProp.server.host+":"+pConfProp.server.port;
                 zk.a_create (ROOT_PATH+zNodePath, JSON.stringify(pConfProp), zookeeper.ZOO_EPHEMERAL, function (rc, error, path)  {
                     if (rc != 0) {
                         // ERROR :: 존재하지 않아서 생성했는데 에러 난 경우
                         console.error ("  [ZK:**ERROR**] ("+ROOT_PATH+zNodePath+") %d, error: '%s', path=%s", rc, error, path);
                     } else {
-                        console.log (" [ZK:CREATEED] %s", path);
                         zk_retrieveServerList();
                     }
             });
@@ -118,8 +111,6 @@ SODABOX.server = (function (zookeeper, redis) {
                 },
                 function(rc,error,children){
 
-                    console.log(' >>> '+rc+','+error+','+children);
-
                     if(rc==0){
 
                         var _lastCheckCount = pMessageStorageList['_lastCheckCount'] + 1;
@@ -127,19 +118,13 @@ SODABOX.server = (function (zookeeper, redis) {
 
                         children.forEach(function(child){
 
-                            console.log(child);
                             var thisServerInfo = child.split(':');
                             if(pConfProp.server.channel != thisServerInfo[0] ){ // CHANNEL NAME
                                 zk.a_get( ROOT_PATH+'/'+child, false, function(rc, error, stat, data){
 
-                                    console.log(' ---- '+rc+','+error+','+stat+','+data);
-
                                     var thisServerInfo = child.split(':');
                                     var parsedConf = JSON.parse(data);
 
-                                    console.log(parsedConf.server.channel);
-
-                                    console.log('---------'+thisServerInfo[0]+'\n'+pMessageStorageList+'\n\n\n\n');
                                     // ---- 
                                     if(!pMessageStorageList.hasOwnProperty(thisServerInfo[0])){
 
@@ -151,17 +136,17 @@ SODABOX.server = (function (zookeeper, redis) {
                                         );
                                                                     
                                         if (parsedConf.messageStorage.password) {
-                                            console.log('dasdfasdfasdasfadad');
+
                                             messageClient.auth(parsedConf.messageStorage.password, function() {
-                                                console.log(' - Redis client connected');
+                                                console.log(' - Redis client connected. ('+parsedConf.messageStorage.host+':'+parsedConf.messageStorage.port+')');
                                                 pMessageStorageList[thisServerInfo[0]] = messageClient;
                                             });
                                         }else{
-                                            console.log(' - Redis client connected without password.');
+                                            console.log(' - Redis client connected. ('+parsedConf.messageStorage.host+':'+parsedConf.messageStorage.port+')');
                                             pMessageStorageList[thisServerInfo[0]] = messageClient;    
                                         }
                                     }else{
-                                        console.log(' Redis Client was existed....');
+                                        console.log(' - Redis client was existed. ('+parsedConf.messageStorage.host+':'+parsedConf.messageStorage.port+')');
                                     }
 
                                 
@@ -344,6 +329,9 @@ SODABOX.socket = (function (io, redis) {
             }else{
                 
                 // ** MG, SC ** //
+
+                console.log('>>>>>>>>>>>> '+c.CN);
+
                 SODABOX.server.messageStorageList[c.CN].publish( c.CN,   JSON.stringify({
                     MG : msgType,   // (MG - message)
                     SC : socketId,  // (SC - socket )

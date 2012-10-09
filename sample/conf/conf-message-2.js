@@ -5,7 +5,7 @@ module.exports = {
 
     server: {
         host : '127.0.0.1',
-        port : '3002'
+        port : '3301'
     },
     
     zookeeper: {

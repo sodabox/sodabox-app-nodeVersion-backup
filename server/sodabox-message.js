@@ -25,6 +25,8 @@ SODABOX.server = (function (zookeeper, redis) {
     var MSG_SERVER_ROOT_PATH = '/SODABOX_messageServer';
     var pMessageServerList = {};
 
+    var pMessageStorageServerList = {};
+
     var ROOT_PATH = '/SODABOX_messageStorage';
     var pMessageStorageList = {};
     var pConfProp;
@@ -43,12 +45,8 @@ SODABOX.server = (function (zookeeper, redis) {
         zk.connect(function (err) {
             if(err) throw err;
 
-            console.log (" [ZK:CONNECT] id=%s", zk.client_id);
-
             // MSG_SERVER_ROOT_PATH
             zk.a_exists(MSG_SERVER_ROOT_PATH, null, function ( rc, error, stat ){
-
-                console.log(" [ZK:EXISTS] "+rc+", "+error+", "+stat );
 
                 if(rc != 0){ // 존재하지 않는다면, rootPath 생성
                     zk.a_create (MSG_SERVER_ROOT_PATH, null, zookeeper.ZOO_PERSISTENT, function (rc, error, path)  {
@@ -73,15 +71,12 @@ SODABOX.server = (function (zookeeper, redis) {
 
                 // @ TODO 같은 SocketServer 가 존재하면 안된다 체크 필요!!
 
-                console.log(JSON.stringify(pConfProp));
-
                 var zNodePath = "/"+pConfProp.server.host+":"+pConfProp.server.port;
                 zk.a_create (MSG_SERVER_ROOT_PATH+zNodePath, JSON.stringify(pConfProp), zookeeper.ZOO_EPHEMERAL, function (rc, error, path)  {
                     if (rc != 0) {
                         // ERROR :: 존재하지 않아서 생성했는데 에러 난 경우
                         console.error ("  [ZK:**ERROR**] ("+MSG_SERVER_ROOT_PATH+zNodePath+") %d, error: '%s', path=%s", rc, error, path);
                     } else {
-                        console.log (" [ZK:CREATEED] %s", path);
                         zk_retrieveServerList();
                         zk_retrieveMessageServerList();
                     }
@@ -89,6 +84,9 @@ SODABOX.server = (function (zookeeper, redis) {
         });
     }
     function zk_retrieveServerList(){
+
+
+console.log(' - ROOT_PATH : '+ROOT_PATH);
         zk.aw_get_children(
                 ROOT_PATH,
                 function ( type, state, path ){
@@ -97,31 +95,46 @@ SODABOX.server = (function (zookeeper, redis) {
                 },
                 function(rc,error,children){
 
-                    console.log(' >>> '+rc+','+error+','+children);
-
                     if(rc==0){
 
-                        var _lastCheckCount = pMessageStorageList['_lastCheckCount'] + 1;
-                        pMessageStorageList['_lastCheckCount'] = _lastCheckCount;
+                        var _lastCheckCount = pMessageStorageServerList['_lastCheckCount'] + 1;
+                        pMessageStorageServerList['_lastCheckCount'] = _lastCheckCount;
 
                         children.forEach(function(child){
 
-                            console.log(child);
+console.log(' > child 1 : '+child);
+
+                            pMessageStorageServerList[child] = _lastCheckCount;  
+                        });
+
+                        for (var k in pMessageStorageServerList){
+                            var k_lastCheckCount = pMessageStorageServerList[k];
+
+                            if(k_lastCheckCount < _lastCheckCount) {
+
+                                delete pMessageStorageServerList[k];
+
+                                var tmpServerInfo = k.split(':');
+                                delete pMessageStorageList[tmpServerInfo[0]];
+
+                            }
+                        }
+
+
+                        _lastCheckCount = pMessageStorageList['_lastCheckCount'] + 1;
+                        pMessageStorageList['_lastCheckCount'] = _lastCheckCount;
+
+                        children.forEach(function(child){
+console.log(' > child2 : '+child);
                             var thisServerInfo = child.split(':');
                             //if(pConfProp.server.channel != thisServerInfo[0] ){ // CHANNEL NAME
                                 zk.a_get( ROOT_PATH+'/'+child, false, function(rc, error, stat, data){
 
-                                    console.log(' ---- '+rc+','+error+','+stat+','+data);
-
+console.log(' > child : '+ROOT_PATH+'/'+child);
                                     var thisServerInfo = child.split(':');
                                     var parsedConf = JSON.parse(data);
 
-                                    console.log(parsedConf.server.channel);
-
-                                    console.log('---------'+thisServerInfo[0]+'\n'+pMessageStorageList+'\n\n\n\n');
-                                    // ---- 
                                     if(!pMessageStorageList.hasOwnProperty(thisServerInfo[0])){
-
 
                                         var messageClient = redis.createClient(
                                             parsedConf.messageStorage.port, 
@@ -130,17 +143,18 @@ SODABOX.server = (function (zookeeper, redis) {
                                         );
                                                                     
                                         if (parsedConf.messageStorage.password) {
-                                            console.log('dasdfasdfasdasfadad');
                                             messageClient.auth(parsedConf.messageStorage.password, function() {
-                                                console.log(' - Redis client connected');
+                                                
+                                                console.log(' - Redis client connected. ('+parsedConf.messageStorage.host+':'+parsedConf.messageStorage.port+')');
+
                                                 pMessageStorageList[thisServerInfo[0]] = messageClient;
                                             });
                                         }else{
-                                            console.log(' - Redis client connected without password.');
+                                            console.log(' - Redis client connected. ('+parsedConf.messageStorage.host+':'+parsedConf.messageStorage.port+')');
                                             pMessageStorageList[thisServerInfo[0]] = messageClient;    
                                         }
                                     }else{
-                                        console.log(' Redis Client was existed....');
+                                        console.log(' - Redis client was existed. ('+parsedConf.messageStorage.host+':'+parsedConf.messageStorage.port+')');
                                     }
 
                                 
@@ -164,32 +178,40 @@ SODABOX.server = (function (zookeeper, redis) {
                 },
                 function(rc,error,children){
 
-                    console.log(' >>> '+rc+','+error+','+children);
-
                     if(rc==0){
                         var _lastCheckCount = pMessageServerList['_lastCheckCount'] + 1;
                         pMessageServerList['_lastCheckCount'] = _lastCheckCount;
                         children.forEach(function(child){
-                            console.log(child);
                             pMessageServerList[child] = _lastCheckCount;  
                         });
+
+                        for (var k in pMessageServerList){
+                            var k_lastCheckCount = pMessageServerList[k];
+                            if(k_lastCheckCount < _lastCheckCount) {
+                                delete pMessageServerList[k];
+                            }
+                        }
                     }
 
                 }
         );
     }
 
-
     // [ public methods ]
     return {
         init: function (conf) {
             pConfProp = conf;
             pMessageStorageList['_lastCheckCount'] = 0;
+            pMessageStorageServerList['_lastCheckCount'] = 0;
             pMessageServerList['_lastCheckCount'] = 0;
 
             zk_connect();
         },
+
         messageStorageList: pMessageStorageList,
+
+        messageStorageServerList: pMessageStorageServerList,
+
         messageServerList: pMessageServerList
 
     };
@@ -267,7 +289,7 @@ SODABOX.app = (function (everyauth, express, redis) {
           var params  = urlObj.query;
 
           req.session.auth = {};
-          
+
           req.session.auth._callbackSocketId = req.query["SC"];
           req.session.auth._channel = req.query["CN"];
 
@@ -301,6 +323,8 @@ SODABOX.app = (function (everyauth, express, redis) {
               };
             }
 
+            console.log('req.session.auth._channel : '+req.session.auth._channel);
+
             SODABOX.server.messageStorageList[req.session.auth._channel].publish( req.session.auth._channel,  JSON.stringify({
                 SC : req.session.auth._callbackSocketId,
                 MG : 'AUTH',
@@ -319,6 +343,52 @@ SODABOX.app = (function (everyauth, express, redis) {
         });
 
         app.get('/user', function (req, res){
+
+
+            // appServer, socketServer, channelName
+
+
+            var serverInfos = {};
+            var randomNum = Math.floor((Object.keys(SODABOX.server.messageStorageServerList).length-1)*Math.random());
+
+            var cnt = 0;
+
+            for (var k in SODABOX.server.messageStorageServerList){
+
+
+                console.log(cnt+" "+randomNum+" messageStorageServerList : "+k);
+
+                if(k != '_lastCheckCount'){
+                    if(randomNum == cnt){ 
+
+                        var tmpServerInfo = k.split(':');
+
+                        serverInfos['channel'] = tmpServerInfo[0];
+                        serverInfos['socketServer'] = tmpServerInfo[1]+":"+tmpServerInfo[2];
+                        break;
+                    }
+                    cnt = cnt + 1;
+                }
+            }
+
+            randomNum = Math.floor((Object.keys(SODABOX.server.messageServerList).length-1)*Math.random());
+            cnt = 0;
+
+            for (var k in SODABOX.server.messageServerList){
+
+
+                console.log(cnt+" "+randomNum+" messageServerList : "+k);
+
+
+                if(k != '_lastCheckCount'){
+                
+                    if(randomNum == cnt){ 
+                        serverInfos['appServer'] = k;
+                        break;
+                    }
+                    cnt = cnt + 1;
+                }
+            }
 
 
           if(req.session.auth === undefined || !req.session.auth.loggedIn){
@@ -340,9 +410,9 @@ SODABOX.app = (function (everyauth, express, redis) {
             
             if(req.query["_callback"] === undefined || req.query["_callback"] == null){
               
-              res.send('{isAuth:false}');
+              res.send('{isAuth:false, serverInfos:'+JSON.stringify(serverInfos)+'}');
             }else{
-              res.send(req.query["_callback"] + '({isAuth:false, tryTarget:"'+req.query["_tryTarget"]+'"});');
+              res.send(req.query["_callback"] + '({isAuth:false, serverInfos:'+JSON.stringify(serverInfos)+', tryTarget:"'+req.query["_tryTarget"]+'"});');
             }
 
           }else{
@@ -375,9 +445,9 @@ SODABOX.app = (function (everyauth, express, redis) {
             });
 
             if(req.query["_callback"] === undefined || req.query["_callback"] == null){
-              res.end('{isAuth:true, user:'+JSON.stringify(loginedUsr)+'}');
+              res.end('{isAuth:true, serverInfos:'+JSON.stringify(serverInfos)+', user:'+JSON.stringify(loginedUsr)+'}');
             }else{
-              res.end(req.query["_callback"] + '({isAuth:true, user:'+JSON.stringify(loginedUsr)+'});');  
+              res.end(req.query["_callback"] + '({isAuth:true, serverInfos:'+JSON.stringify(serverInfos)+', user:'+JSON.stringify(loginedUsr)+'});');  
             }
 
           }
@@ -446,6 +516,8 @@ SODABOX.app = (function (everyauth, express, redis) {
                         //console.log(channels[socketId]+" ------- \n"+params.MG+" / "+socketId);
                         
                         var c = JSON.parse(channels[socketId]);
+
+                        console.log('>>>>>>>>>>>>>>>>> cccc : '+c.CN);
                         
                         SODABOX.server.messageStorageList[c.CN].publish( c.CN,  JSON.stringify({
                             MG : params.MG,   // (MG - message)
