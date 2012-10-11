@@ -83,15 +83,26 @@ SODABOX.server = (function (zookeeper, redis) {
                 });
         });
     }
+
+
+    /*
+
+            None (-1),
+            NodeCreated (1),
+            NodeDeleted (2),
+            NodeDataChanged (3),
+            NodeChildrenChanged (4);
+    */
     function zk_retrieveServerList(){
 
-
-console.log(' - ROOT_PATH : '+ROOT_PATH);
         zk.aw_get_children(
                 ROOT_PATH,
                 function ( type, state, path ){
-                    console.log('  [WATCH] '+type+','+state+','+path);
-                    zk_retrieveServerList();
+                    console.log('  [WATCH] '+'<'+ROOT_PATH+'> '+type+','+state+','+path);
+                    if(type > -1){
+                        zk_retrieveServerList();
+                    }
+                    
                 },
                 function(rc,error,children){
 
@@ -101,8 +112,6 @@ console.log(' - ROOT_PATH : '+ROOT_PATH);
                         pMessageStorageServerList['_lastCheckCount'] = _lastCheckCount;
 
                         children.forEach(function(child){
-
-console.log(' > child 1 : '+child);
 
                             pMessageStorageServerList[child] = _lastCheckCount;  
                         });
@@ -115,6 +124,7 @@ console.log(' > child 1 : '+child);
                                 delete pMessageStorageServerList[k];
 
                                 var tmpServerInfo = k.split(':');
+                                pMessageStorageList[tmpServerInfo[0]].quit();
                                 delete pMessageStorageList[tmpServerInfo[0]];
 
                             }
@@ -125,12 +135,10 @@ console.log(' > child 1 : '+child);
                         pMessageStorageList['_lastCheckCount'] = _lastCheckCount;
 
                         children.forEach(function(child){
-console.log(' > child2 : '+child);
                             var thisServerInfo = child.split(':');
                             //if(pConfProp.server.channel != thisServerInfo[0] ){ // CHANNEL NAME
                                 zk.a_get( ROOT_PATH+'/'+child, false, function(rc, error, stat, data){
 
-console.log(' > child : '+ROOT_PATH+'/'+child);
                                     var thisServerInfo = child.split(':');
                                     var parsedConf = JSON.parse(data);
 
@@ -173,8 +181,8 @@ console.log(' > child : '+ROOT_PATH+'/'+child);
         zk.aw_get_children(
                 MSG_SERVER_ROOT_PATH,
                 function ( type, state, path ){
-                    console.log('  [WATCH] '+type+','+state+','+path);
-                    zk_retrieveMessageServerList();
+                    console.log('  [WATCH] '+'<'+MSG_SERVER_ROOT_PATH+'> '+type+','+state+','+path);
+                    if(type > -1) zk_retrieveMessageServerList();
                 },
                 function(rc,error,children){
 

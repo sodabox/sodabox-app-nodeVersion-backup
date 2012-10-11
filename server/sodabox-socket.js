@@ -24,6 +24,7 @@ SODABOX.server = (function (zookeeper, redis) {
     var pConfProp;
     var zk;
 
+/*
     // [ private methods ]
     function addServer(key, serverObj){
         if(!pMessageStorageList.hasOwnProperty[key]){
@@ -50,7 +51,7 @@ SODABOX.server = (function (zookeeper, redis) {
             }
         }
     }
-
+*/
 
     function zk_connect(){
         zk = new zookeeper(
@@ -107,7 +108,7 @@ SODABOX.server = (function (zookeeper, redis) {
                 ROOT_PATH,
                 function ( type, state, path ){
                     console.log('  [WATCH] '+type+','+state+','+path);
-                    zk_retrieveServerList();
+                    if(type > -1) zk_retrieveServerList();
                 },
                 function(rc,error,children){
 

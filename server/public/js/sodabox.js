@@ -597,8 +597,6 @@ var SODABOX = (function(DEF_VAR, UTILS, WIN) {
             _d.divName      = DEF_VAR._SODABOX_divName;
             _d.range        = DEF_VAR._SODABOX_range;
 
-console.log(_d.urlApp +' / '+_d.urlSocket +' / '+_d.urlWeb+' / '+_d.channel);
-
            if(data){
                 if(data.webUrl)     _d.urlWeb       = data.webUrl;
                 if(data.divName)    _d.divName      = data.divName;
